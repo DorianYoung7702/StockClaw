@@ -1,0 +1,35 @@
+# yFinance - 美股监控 - 4h
+# 每周一至周六的02:35和08:35执行
+35 2,8 * * 1-6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 4h --market-type us_stock --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - 美股监控 - 1d
+# 每周一至周六的07:40执行
+40 7 * * 1-6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 1d --market-type us_stock --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - 美股监控 - 成交额刷新
+# 每周二、四、六的03:40执行
+40 3 * * 2,4,6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 build_monitoring_pool.py --force-rebuild --market-type us_stock >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - ETF监控 - 4h
+# 每周一至周六的02:40和08:40执行
+40 2,8 * * 1-6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 4h --market-type etf --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - ETF监控 - 1d
+# 每周一至周六的07:55执行
+55 7 * * 1-6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 1d --market-type etf --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - ETF监控 - 成交额刷新
+# 每周二、四、六的06:45执行
+45 6 * * 2,4,6 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 build_monitoring_pool.py --force-rebuild --market-type etf >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - 港股监控 - 4h
+# 每周一至周五的12:05和16:05执行
+5 12,16 * * 1-5 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 4h --market-type hk_stock --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - 港股监控 - 1d
+# 每周一至周五的16:15执行
+15 16 * * 1-5 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 main.py --timeframe 1d --market-type hk_stock --skip-market-conditions >> /home/ubuntu/cron.log 2>&1'
+
+# yFinance - 港股监控 - 成交额刷新
+# 每周一、三、五的17:20执行
+20 17 * * 1,3,5 bash -c 'cd /home/ubuntu/workspace/openbb-monitor && /home/ubuntu/miniconda3/envs/openbb/bin/python3 build_monitoring_pool.py --force-rebuild --market-type hk_stock >> /home/ubuntu/cron.log 2>&1'

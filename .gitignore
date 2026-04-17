@@ -1,0 +1,57 @@
+# Secrets (env files with API keys)
+.env
+*.env
+env
+*.local
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Python runtime
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg
+
+# Node runtime
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Local deployment artifacts
+*.tar
+*.tar.gz
+deploy/certs/
+langchain_agent/cache/
+langchain_agent/data/
+
+# Personal / throwaway files that should never be committed
+# (caught things like `_obb_install.txt`, `_test.txt`, `=`, `ERROR`, `transferring`, `[internal]`)
+_*.txt
+/=
+/ERROR
+/transferring
+/\[internal\]
+deploy/=
+deploy/ERROR
+deploy/transferring
+deploy/\[internal\]
+
+# Monitor-generated CSV snapshots (timestamped)
+monitor/[0-9]*.csv
+monitor/build_pool.log
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

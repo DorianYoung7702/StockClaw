@@ -1,0 +1,174 @@
+//@version=5
+indicator("低波动和穿越报警系统（V2.3修订版, 轻中重低波动）", overlay=true, max_labels_count=500, max_lines_count=500)
+
+// =========================
+// 参数
+// =========================
+atrLen = input.int(title="ATR周期", defval=20, minval=1)
+tolFact = input.float(title="强排列容差系数", defval=0.15, minval=0.0, step=0.01)
+lookbackBars = input.int(3, "低波动条件的回顾根数（至少N根满足）", minval=2, maxval=5)
+
+// =========================
+// 计算9条均线与ATR
+// =========================
+ma2 = ta.sma(close, 2)
+ma5 = ta.sma(close, 5)
+ma7 = ta.sma(close, 7)
+ma9 = ta.sma(close, 9)
+ma11 = ta.sma(close, 11)
+ma13 = ta.sma(close, 13)
+ma15 = ta.sma(close, 15)
+ma17 = ta.sma(close, 17)
+ma20 = ta.sma(close, 20)
+
+atr20 = ta.atr(atrLen)
+
+// =========================
+// 计算均线离散度 MACO
+// =========================
+maMax = math.max(math.max(math.max(ma2,ma5), math.max(ma7,ma9)), math.max(math.max(ma11,ma13), math.max(ma15, math.max(ma17,ma20))))
+maMin = math.min(math.min(math.min(ma2,ma5), math.min(ma7,ma9)), math.min(math.min(ma11,ma13), math.min(ma15, math.min(ma17,ma20))))
+denom = (maMax + maMin)*0.5
+maco = denom != 0 ? (maMax - maMin) / denom * 100.0 : 0.0
+
+// =========================
+// 工具函数：取最近N根中的第k小值
+// =========================
+f_nth_smallest(src, length, k) =>
+    var float result = na
+    if bar_index >= length
+        arr = array.new_float(length, 0.0)
+        for i = 0 to length - 1
+            array.set(arr, i, src[i])
+        array.sort(arr)
+        result := array.get(arr, k-1) // k=1 表示最小
+    result
+
+// =========================
+// 历史低分位阈值
+// =========================
+maco_20th = f_nth_smallest(maco, 20, 2)
+maco_40th = f_nth_smallest(maco, 40, 4)
+maco_60th = f_nth_smallest(maco, 60, 6)
+maco_80th = f_nth_smallest(maco, 80, 8)
+
+// =========================
+// 基础条件
+// =========================
+cond_atr = (maMax - maMin) < atr20
+cond_hist = (not na(maco_20th) and maco < maco_20th) or            (not na(maco_40th) and maco < maco_40th) or            (not na(maco_60th) and maco < maco_60th) or            (not na(maco_80th) and maco < maco_80th)
+
+// =========================
+// 轻度 / 中度 / 重度 低波动
+// =========================
+
+// 轻度 = (ATR 或 历史) 最近N根至少2根
+light_single = cond_atr or cond_hist
+light_recent = (light_single ? 1 : 0) + (light_single[1] ? 1 : 0) + (light_single[2] ? 1 : 0) >= 2
+
+// 中度 = (ATR 且 历史) 最近N根至少2根
+medium_single = cond_atr and cond_hist
+medium_recent = (medium_single ? 1 : 0) + (medium_single[1] ? 1 : 0) + (medium_single[2] ? 1 : 0) >= 2
+
+// 重度 = 连续3根都满足中度
+heavy = medium_single and medium_single[1] and medium_single[2]
+
+// =========================
+// 状态变化报警
+// =========================
+light_alert = not light_recent[1] and light_recent
+medium_alert = not medium_recent[1] and medium_recent
+heavy_alert = not heavy[1] and heavy
+
+// =========================
+// 可视化
+// =========================
+//plotshape(light_alert, title="轻度低波动", style=shape.diamond, size=size.tiny, color=color.orange, text="轻", textcolor=color.rgb(150, 3, 3), location=location.abovebar)
+plotshape(medium_alert, title="中度低波动", style=shape.square, size=size.tiny, color=color.yellow, text="中", textcolor=color.black, location=location.abovebar)
+plotshape(heavy_alert, title="重度低波动", style=shape.circle, size=size.tiny, color=color.red,    text="重", textcolor=color.rgb(17, 20, 231), location=location.abovebar)
+plot(light_recent ? 1 : 0, title="轻-单次", display = display.data_window)
+plot(medium_recent ? 1 : 0, title="中-单次", display = display.data_window)
+plot(heavy ? 1 : 0, title="重-单次", display = display.data_window)
+plot(atr20, 'atr20', display = display.data_window)
+plot(maco_20th, 'maco_20th', display = display.data_window)
+plot(maco_40th, 'maco_40th', display = display.data_window)
+plot(maco_60th, 'maco_60th', display = display.data_window)
+plot(maco_80th, 'maco_80th', display = display.data_window)
+plot(maMax, 'maMax', display = display.data_window)
+plot(maMin, 'maMin', display = display.data_window)
+
+// =========================
+// 均线plot
+// =========================
+plot(ma2, "MA2", color=#A0A0A0, linewidth=1)
+plot(ma5, "MA5", color=#B0B0B0, linewidth=1)
+plot(ma7, "MA7", color=#C0C0C0, linewidth=1)
+plot(ma9, "MA9", color=#D0D0D0, linewidth=1)
+plot(ma11, "MA11", color=#C0D0FF, linewidth=1)
+plot(ma13, "MA13", color=#90B0FF, linewidth=1)
+plot(ma15, "MA15", color=#6090FF, linewidth=1)
+plot(ma17, "MA17", color=#3070FF, linewidth=1)
+plot(ma20, "MA20", color=#1050FF, linewidth=2)
+plot(cond_atr ? 1 : 0, 'cond_atr', display = display.data_window)
+plot(cond_hist ? 1 : 0, 'cond_hist', display = display.data_window)
+
+// =========================
+// 穿越信号报警
+// =========================
+
+// 条件1：当前或前一根满足 heavy
+heavy_recent = heavy or heavy[1]
+
+// 条件2：当前K线中大阳/阴线（实体可大可小，只要振幅大于ATR20）
+big_bar = (high - low) >= 0.95*atr20
+
+// 综合条件：穿越信号
+breakout_signal = heavy_recent and big_bar
+
+// 状态变化触发报警：从未满足 -> 满足
+breakout_alert = not breakout_signal[1] and breakout_signal
+
+// 可视化标记
+plotshape(breakout_alert, title="穿越信号", style=shape.triangleup, size=size.small,
+         color=color.fuchsia, text="穿越", textcolor=color.white, location=location.belowbar)
+
+// TradingView 报警
+// alertcondition(breakout_alert, title="报警4：穿越信号",
+//                message="【穿越信号】{{ticker}} {{interval}}：低波动后出现中大K线突破。")
+
+// =========================
+// 报警条件（供 TradingView Alerts 使用）
+// =========================
+// alertcondition(light_alert, title="报警1：轻度低波动", message="【轻度低波动】{{ticker}} {{interval}}：满足轻度低波动条件。")
+// alertcondition(medium_alert, title="报警2：中度低波动", message="【中度低波动】{{ticker}} {{interval}}：满足中度低波动条件。")
+// alertcondition(heavy_alert, title="报警3：重度低波动", message="【重度低波动】{{ticker}} {{interval}}：连续3根满足中度低波动条件。")
+
+// 警报汇总
+
+var string alert_text = ""
+alert_text := ""
+if breakout_alert
+    alert_text := alert_text + "【穿越信号】" + syminfo.tickerid + " " + timeframe.period + "：低波动后出现中大K线突破。" + "\n"
+if light_alert
+    alert_text := alert_text + "【轻度低波动】" + syminfo.tickerid + " " + timeframe.period + "：满足轻度低波动条件。" + "\n"
+if medium_alert
+    alert_text := alert_text + "【中度低波动】" + syminfo.tickerid + " " + timeframe.period + "：满足中度低波动条件。" + "\n"
+if heavy_alert
+    alert_text := alert_text + "【重度低波动】" + syminfo.tickerid + " " + timeframe.period + "：连续3根满足中度低波动条件。" + "\n"
+
+// remove last \n
+alert_text := str.replace(alert_text, "\n$", "")
+
+if breakout_alert or light_alert or medium_alert or heavy_alert
+    alert(alert_text, alert.freq_once_per_bar_close)
+
+// =========================
+// 调试用输出
+// =========================
+//plot(maco, title="Maco（均线离散度, %）", color=color.new(color.gray, 0))
+// plot(maco, "阈值", color=color.new(color.red,70))
+// plot(maco_20th, "阈值20", color=color.new(color.red,70))
+// plot(maco_40th, "阈值40", color=color.new(color.orange,70))
+// plot(maco_60th, "阈值60", color=color.new(color.yellow,70))
+// plot(maco_80th, "阈值80", color=color.new(color.green,70))
+

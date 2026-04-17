@@ -1,0 +1,24 @@
+Atlas · StockClaw
+Copyright 2026 DorianYoung7702
+
+This product includes software developed by DorianYoung7702.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+This product depends on, and re-distributes, a number of third-party
+open-source libraries. See each library's own LICENSE for details.
+Notable dependencies:
+
+  - LangChain / LangGraph (MIT)         https://github.com/langchain-ai
+  - FastAPI (MIT)                       https://fastapi.tiangolo.com/
+  - Chroma (Apache-2.0)                 https://www.trychroma.com/
+  - Pydantic (MIT)                      https://docs.pydantic.dev/
+  - APScheduler (MIT)                   https://apscheduler.readthedocs.io/
+  - yfinance (Apache-2.0)               https://github.com/ranaroussi/yfinance
+  - Next.js (MIT)                       https://nextjs.org/
+  - React / React-DOM (MIT)             https://react.dev/
+  - Tailwind CSS (MIT)                  https://tailwindcss.com/

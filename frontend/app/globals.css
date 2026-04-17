@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Light mode ── */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 98%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 5% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 5% 46%;
+    --accent: 187 82% 53%;
+    --accent-foreground: 240 5% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+
+    --surface-0: #ffffff;
+    --surface-1: #f8f9fa;
+    --surface-2: #f1f3f5;
+    --surface-3: #e9ecef;
+    --text-primary: #18181b;
+    --text-secondary: #52525b;
+    --text-muted: #a1a1aa;
+    --divider: rgba(0,0,0,0.08);
+  }
+
+  /* ── Dark mode ── */
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 6.5%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 6.5%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 187 82% 53%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 160 84% 39%;
+
+    --surface-0: #09090b;
+    --surface-1: #18181b;
+    --surface-2: #27272a;
+    --surface-3: #3f3f46;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --divider: rgba(255,255,255,0.06);
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: var(--surface-0);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: color-mix(in srgb, var(--surface-1) 80%, transparent);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--divider);
+  }
+  .glass-hover {
+    transition: background-color 0.2s ease;
+  }
+  .glass-hover:hover {
+    background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+  }
+  .text-theme-primary { color: var(--text-primary); }
+  .text-theme-secondary { color: var(--text-secondary); }
+  .text-theme-muted { color: var(--text-muted); }
+  .border-theme { border-color: var(--divider); }
+  .bg-theme-0 { background-color: var(--surface-0); }
+  .bg-theme-1 { background-color: var(--surface-1); }
+  .bg-theme-2 { background-color: var(--surface-2); }
+}
+
+/* ── Light mode: remap zinc text colors to dark equivalents ── */
+/* Components use zinc-200~600 tuned for dark mode; invert for light mode  */
+:root:not(.dark) .text-zinc-100 { color: #18181b; }
+:root:not(.dark) .text-zinc-200 { color: #18181b; }
+:root:not(.dark) .text-zinc-300 { color: #27272a; }
+:root:not(.dark) .text-zinc-400 { color: #3f3f46; }
+:root:not(.dark) .text-zinc-500 { color: #52525b; }
+:root:not(.dark) .text-zinc-600 { color: #71717a; }
+:root:not(.dark) .text-zinc-700 { color: #71717a; }
+
+/* Surface colors in light mode */
+:root:not(.dark) .bg-surface-1 { background-color: #f4f4f5; }
+:root:not(.dark) .bg-surface-2 { background-color: #e4e4e7; }
+:root:not(.dark) .bg-surface-3 { background-color: #d4d4d8; }
+
+/* border-zinc in light mode */
+:root:not(.dark) .border-zinc-800\/50 { border-color: rgba(0,0,0,0.12); }
+:root:not(.dark) .border-zinc-800\/30 { border-color: rgba(0,0,0,0.08); }
+
+/* ── Unlock transition ── */
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── Unlock beam animation ── */
+/* Beam sweeps in, then color-interpolates to the static gradient (no opacity fade) */
+@keyframes beam-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0%); }
+}
+
+@keyframes beam-fold-shoot {
+  0%    { transform: translateX(0%);    } /* resting */
+  30%   { transform: translateX(100%);  } /* sweep off right */
+  30.1% { transform: translateX(-100%); } /* jump to left (instant) */
+  100%  { transform: translateX(0%);   } /* shoot back in */
+}
+
+.beam-to-gradient,
+.beam-replay {
+  position: relative;
+  overflow: hidden;
+}
+
+.beam-to-gradient::after,
+.beam-replay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(16,185,129,0)    0%,
+    rgba(16,185,129,1)   75%,
+    rgba(74,222,128,1)  100%);
+  will-change: transform;
+}
+
+/* First unlock: slide in from left after logo fades (2s delay) */
+.beam-to-gradient::after {
+  animation: beam-sweep 0.8s cubic-bezier(0.25, 1, 0.5, 1) 2s both;
+}
+
+/* Retrigger: fold back right then re-shoot, no delay */
+.beam-replay::after {
+  animation: beam-fold-shoot 1s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}

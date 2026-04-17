@@ -1,0 +1,17 @@
+[
+  {"input": "帮我分析一下苹果", "expected_intent": "single_stock", "expected_tickers": ["AAPL"]},
+  {"input": "TSLA基本面分析", "expected_intent": "single_stock", "expected_tickers": ["TSLA"]},
+  {"input": "看看NVDA财务", "expected_intent": "single_stock", "expected_tickers": ["NVDA"]},
+  {"input": "分析腾讯", "expected_intent": "single_stock", "expected_tickers": ["0700.HK"]},
+  {"input": "对比AAPL和MSFT", "expected_intent": "compare", "expected_tickers": ["AAPL", "MSFT"]},
+  {"input": "给我看今天强势股", "expected_intent": "update_config", "expected_tickers": []},
+  {"input": "筛选美股前20只", "expected_intent": "update_config", "expected_tickers": []},
+  {"input": "把NVDA加入自选", "expected_intent": "watchlist_add", "expected_tickers": ["NVDA"]},
+  {"input": "你好", "expected_intent": "chat", "expected_tickers": []},
+  {"input": "PE是什么意思", "expected_intent": "chat", "expected_tickers": []},
+  {"input": "分析AAPL并加入观察", "expected_intent": "analyze_and_watch", "expected_tickers": ["AAPL"]},
+  {"input": "先分析苹果再分析微软然后总结", "expected_intent": "multi_step", "expected_tickers": ["AAPL", "MSFT"]},
+  {"input": "把RSI改成65", "expected_intent": "update_config", "expected_tickers": []},
+  {"input": "换成港股", "expected_intent": "update_config", "expected_tickers": []},
+  {"input": "帮我研究一下AMD", "expected_intent": "single_stock", "expected_tickers": ["AMD"]}
+]
